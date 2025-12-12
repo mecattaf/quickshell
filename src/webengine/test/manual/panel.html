@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+
+        .panel {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 16px;
+        }
+
+        .left,
+        .center,
+        .right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .time {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .workspaces {
+            display: flex;
+            gap: 6px;
+        }
+
+        .workspace {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .workspace.active {
+            background: white;
+            width: 20px;
+            border-radius: 4px;
+        }
+
+        .status-item {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        #connection-status {
+            font-size: 11px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="panel">
+        <div class="left">
+            <div class="workspaces">
+                <div class="workspace active"></div>
+                <div class="workspace"></div>
+                <div class="workspace"></div>
+                <div class="workspace"></div>
+            </div>
+        </div>
+
+        <div class="center">
+            <span class="time" id="time">--:--</span>
+        </div>
+
+        <div class="right">
+            <span class="status-item" id="connection-status">Connecting...</span>
+        </div>
+    </div>
+
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script src="qrc:///Quickshell/WebEngine/webshell.js"></script>
+    <script>
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('time').textContent = `${hours}:${minutes}`;
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Initialize WebShell
+        initWebShell().then(shell => {
+            document.getElementById('connection-status').textContent = 'Connected';
+            shell.log('info', 'Panel initialized successfully');
+
+            // Get theme tokens
+            shell.getThemeTokens().then(tokens => {
+                shell.log('debug', 'Theme tokens: ' + JSON.stringify(tokens));
+            });
+        }).catch(err => {
+            document.getElementById('connection-status').textContent = 'Disconnected';
+            console.error('WebShell init failed:', err);
+        });
+    </script>
+</body>
+
+</html>

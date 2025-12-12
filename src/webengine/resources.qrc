@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/Quickshell/WebEngine">
+        <file>webshell.js</file>
+    </qresource>
+</RCC>

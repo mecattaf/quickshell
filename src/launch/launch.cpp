@@ -27,6 +27,10 @@
 #include "build.hpp"
 #include "launch_p.hpp"
 
+#ifdef QS_WEBENGINE
+#include <QtWebEngineQuick/qtwebenginequickglobal.h>
+#endif
+
 #if CRASH_REPORTER
 #include "../crash/handler.hpp"
 #endif
@@ -74,6 +78,7 @@ int launch(const LaunchArgs& args, char** argv, QCoreApplication* coreApplicatio
 		bool nativeTextRendering = false;
 		bool desktopSettingsAware = true;
 		bool useSystemStyle = false;
+		bool enableWebEngine = false;
 		QString iconTheme = qEnvironmentVariable("QS_ICON_THEME");
 		QHash<QString, QString> envOverrides;
 		QString dataDir;
@@ -88,6 +93,12 @@ int launch(const LaunchArgs& args, char** argv, QCoreApplication* coreApplicatio
 			auto pragma = line.sliced(11).trimmed();
 
 			if (pragma == "UseQApplication") pragmas.useQApplication = true;
+			else if (pragma == "EnableWebEngine") {
+				pragmas.enableWebEngine = true;
+#ifndef QS_WEBENGINE
+				qWarning() << "EnableWebEngine pragma used but Quickshell was built without WebEngine support (-DWEBENGINE=OFF)";
+#endif
+			}
 			else if (pragma == "NativeTextRendering") pragmas.nativeTextRendering = true;
 			else if (pragma == "IgnoreSystemSettings") pragmas.desktopSettingsAware = false;
 			else if (pragma == "RespectSystemStyle") pragmas.useSystemStyle = true;
@@ -221,8 +232,37 @@ int launch(const LaunchArgs& args, char** argv, QCoreApplication* coreApplicatio
 
 	delete coreApplication;
 
+#ifdef QS_WEBENGINE
+	if (pragmas.enableWebEngine) {
+		// Validate argv[0] for Chromium's CommandLine::Init()
+		// Chromium requires at least one argument (the program path)
+		if (argv == nullptr || argv[0] == nullptr) {
+			qWarning() << "WebEngine: argv[0] is null, Chromium subprocess may fail";
+		}
+
+		// Set DevTools port from environment if specified
+		// This must be done BEFORE QtWebEngineQuick::initialize()
+		// Users can set QS_WEBENGINE_DEVTOOLS_PORT=<port> to enable debugging
+		auto devToolsPort = qEnvironmentVariable("QS_WEBENGINE_DEVTOOLS_PORT");
+		if (!devToolsPort.isEmpty()) {
+			qputenv("QTWEBENGINE_REMOTE_DEBUGGING", devToolsPort.toUtf8());
+			qInfo() << "WebEngine DevTools enabled on port" << devToolsPort;
+		}
+
+		QCoreApplication::setAttribute(Qt::AA_ShareOpenGLContexts);
+		QtWebEngineQuick::initialize();
+		qInfo() << "WebEngine initialized";
+	}
+#endif
+
 	QGuiApplication* app = nullptr;
-	auto qArgC = 0;
+	// Chromium's CommandLine::Init() requires argc >= 1 (argv[0] must be the program name).
+	// If qArgC is 0, it fails to determine the browser subprocess path and crashes.
+	auto qArgC = 1;
+
+	if (pragmas.useQtWebEngineQuick) {
+		web_engine::init();
+	}
 
 	if (pragmas.useQApplication) {
 		app = new QApplication(qArgC, argv);

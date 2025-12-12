@@ -46,6 +46,7 @@ boption(FRAME_POINTERS "Keep Frame Pointers (dev)" ${ASAN})
 
 boption(CRASH_REPORTER "Crash Handling" ON)
 boption(USE_JEMALLOC "Use jemalloc" ON)
+boption(WEBENGINE "QtWebEngine" ON)
 boption(SOCKETS "Unix Sockets" ON)
 boption(WAYLAND "Wayland" ON)
 boption(WAYLAND_WLR_LAYERSHELL "  Wlroots Layer-Shell" ON REQUIRES WAYLAND)
@@ -72,6 +73,7 @@ boption(SERVICE_GREETD "Greetd" ON)
 boption(SERVICE_UPOWER "UPower" ON)
 boption(SERVICE_NOTIFICATIONS "Notifications" ON)
 boption(BLUETOOTH "Bluetooth" ON)
+boption(WEBENGINE "QtWebEngine" ON)
 
 include(cmake/install-qml-module.cmake)
 include(cmake/util.cmake)
@@ -103,6 +105,11 @@ endif()
 set(QT_FPDEPS Gui Qml Quick QuickControls2 Widgets ShaderTools)
 set(QT_PRIVDEPS QuickPrivate)
 
+if (WEBENGINE_effective)
+	list(APPEND QT_FPDEPS WebEngineQuick WebChannel)
+	add_compile_definitions(QS_WEBENGINE)
+endif()
+
 include(cmake/pch.cmake)
 
 if (BUILD_TESTING)
@@ -128,6 +135,10 @@ if (DBUS)
 	list(APPEND QT_FPDEPS DBus)
 endif()
 
+if (WEBENGINE_effective)
+	list(APPEND QT_FPDEPS WebEngineQuick WebChannel)
+endif()
+
 find_package(Qt6 REQUIRED COMPONENTS ${QT_FPDEPS})
 
 # In Qt 6.10, private dependencies are required to be explicit,
@@ -148,6 +159,11 @@ if (USE_JEMALLOC)
 	# IMPORTED_TARGET not working for some reason
 	pkg_check_modules(JEMALLOC REQUIRED jemalloc)
 	target_link_libraries(quickshell PRIVATE ${JEMALLOC_LIBRARIES})
+endif()
+
+if (WEBENGINE_effective)
+	target_link_libraries(quickshell PRIVATE Qt6::WebEngineQuick Qt6::WebChannel)
+	target_compile_definitions(quickshell PRIVATE QS_WEBENGINE)
 endif()
 
 install(CODE "

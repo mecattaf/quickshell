@@ -1,0 +1,94 @@
+-- Quickshell configuration
+--   Distributor: Unset
+--   Distributor provided debuginfo: OFF
+--   Disable precompild headers (dev): OFF
+--   Build tests (dev): OFF
+--   ASAN (dev): OFF
+--   Keep Frame Pointers (dev): OFF
+--   Crash Handling: ON
+--   Use jemalloc: ON
+--   QtWebEngine: ON
+--   Unix Sockets: ON
+--   Wayland: ON
+--     Wlroots Layer-Shell: ON
+--     Session Lock: ON
+--     Foreign Toplevel Management: ON
+--     Hyprland: ON
+--       Hyprland IPC: ON
+--       Hyprland Global Shortcuts: ON
+--       Hyprland Focus Grabbing: ON
+--       Hyprland Surface Extensions: ON
+--     Screencopy: ON
+--       Image Copy Capture: ON
+--       Wlroots Screencopy: ON
+--       Hyprland Toplevel Export: ON
+--   X11: ON
+--   I3/Sway: ON
+--     I3/Sway IPC: ON
+--   System Tray: ON
+--   PipeWire: ON
+--   Mpris: ON
+--   Pam: ON
+--   Polkit: ON
+--   Greetd: ON
+--   UPower: ON
+--   Notifications: ON
+--   Bluetooth: ON
+--   QtWebEngine: ON
+CMake Warning at cmake/install-qml-module.cmake:6 (message):
+  Neither INSTALL_QMLDIR nor INSTALL_QML_PREFIX is set.  QML modules will not
+  be installed.
+Call Stack (most recent call first):
+  CMakeLists.txt:78 (include)
+
+
+-- Could NOT find Wayland_Client (missing: Wayland_Client_LIBRARY Wayland_Client_INCLUDE_DIR) (found version "")
+-- Could NOT find Wayland_Server (missing: Wayland_Server_LIBRARY Wayland_Server_INCLUDE_DIR) (found version "")
+-- Could NOT find Wayland_Cursor (missing: Wayland_Cursor_LIBRARY Wayland_Cursor_INCLUDE_DIR) (found version "")
+-- Could NOT find Wayland_Egl (missing: Wayland_Egl_LIBRARY Wayland_Egl_INCLUDE_DIR Wayland_Client_FOUND) (found version "")
+-- Could NOT find Wayland (missing: Wayland_LIBRARIES) 
+CMake Warning at /usr/lib64/cmake/Qt6/Qt6Config.cmake:247 (find_package):
+  Found package configuration file:
+
+    /usr/lib64/cmake/Qt6WaylandClient/Qt6WaylandClientConfig.cmake
+
+  but it set Qt6WaylandClient_FOUND to FALSE so package "Qt6WaylandClient" is
+  considered to be NOT FOUND.  Reason given by package:
+
+  Qt6WaylandClient could not be found because dependency Wayland could not be
+  found.
+
+  Configuring with --debug-find-pkg=Wayland might reveal details why the
+  package was not found.
+
+  Configuring with -DQT_DEBUG_FIND_PACKAGE=ON will print the values of some
+  of the path variables that find_package uses to try and find the package.
+
+Call Stack (most recent call first):
+  CMakeLists.txt:142 (find_package)
+
+
+CMake Error at CMakeLists.txt:142 (find_package):
+  Found package configuration file:
+
+    /usr/lib64/cmake/Qt6/Qt6Config.cmake
+
+  but it set Qt6_FOUND to FALSE so package "Qt6" is considered to be NOT
+  FOUND.  Reason given by package:
+
+  Failed to find required Qt component "WaylandClient".
+
+  Expected Config file at
+  "/usr/lib64/cmake/Qt6WaylandClient/Qt6WaylandClientConfig.cmake" exists
+
+
+
+  Configuring with --debug-find-pkg=Qt6WaylandClient might reveal details why
+  the package was not found.
+
+  Configuring with -DQT_DEBUG_FIND_PACKAGE=ON will print the values of some
+  of the path variables that find_package uses to try and find the package.
+
+
+
+-- Configuring incomplete, errors occurred!

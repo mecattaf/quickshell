@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Widget</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: white;
+            overflow: hidden;
+        }
+
+        .widget {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 16px;
+        }
+
+        .header {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.6;
+            margin-bottom: 12px;
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .big-text {
+            font-size: 48px;
+            font-weight: 200;
+        }
+
+        .sub-text {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .footer {
+            font-size: 11px;
+            opacity: 0.5;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="widget">
+        <div class="header">Weather</div>
+        <div class="content">
+            <div class="big-text">21°</div>
+            <div class="sub-text">Partly Cloudy</div>
+        </div>
+        <div class="footer" id="footer">Loading...</div>
+    </div>
+
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script src="qrc:///Quickshell/WebEngine/webshell.js"></script>
+    <script>
+        initWebShell().then(shell => {
+            document.getElementById('footer').textContent = 'Connected to Quickshell';
+            shell.log('info', 'Widget ready');
+
+            // Listen for dark mode changes
+            shell.darkModeChanged.connect(function () {
+                shell.log('debug', 'Dark mode changed to: ' + shell.darkMode);
+            });
+        }).catch(err => {
+            document.getElementById('footer').textContent = 'Not connected';
+        });
+    </script>
+</body>
+
+</html>
