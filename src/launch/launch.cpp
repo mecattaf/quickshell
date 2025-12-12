@@ -260,9 +260,7 @@ int launch(const LaunchArgs& args, char** argv, QCoreApplication* coreApplicatio
 	// If qArgC is 0, it fails to determine the browser subprocess path and crashes.
 	auto qArgC = 1;
 
-	if (pragmas.useQtWebEngineQuick) {
-		web_engine::init();
-	}
+
 
 	if (pragmas.useQApplication) {
 		app = new QApplication(qArgC, argv);
